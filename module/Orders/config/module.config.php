@@ -38,6 +38,15 @@ return array(
                     ),
                 ),
             ),
+            'orders.rest.orders' => array(
+                'type' => 'Segment',
+                'options' => array(
+                    'route' => '/orders[/:orders_id]',
+                    'defaults' => array(
+                        'controller' => 'Orders\\V1\\Rest\\Orders\\Controller',
+                    ),
+                ),
+            ),
         ),
     ),
     'zf-versioning' => array(
@@ -46,6 +55,7 @@ return array(
             2 => 'orders.rest.clients',
             3 => 'orders.rest.products',
             4 => 'orders.rest.users',
+            5 => 'orders.rest.orders',
         ),
     ),
     'zf-rest' => array(
@@ -137,6 +147,28 @@ return array(
             'collection_class' => 'Orders\\V1\\Rest\\Users\\UsersCollection',
             'service_name' => 'users',
         ),
+        'Orders\\V1\\Rest\\Orders\\Controller' => array(
+            'listener' => 'Orders\\V1\\Rest\\Orders\\OrdersResource',
+            'route_name' => 'orders.rest.orders',
+            'route_identifier_name' => 'orders_id',
+            'collection_name' => 'orders',
+            'entity_http_methods' => array(
+                0 => 'GET',
+                1 => 'PATCH',
+                2 => 'PUT',
+                3 => 'DELETE',
+            ),
+            'collection_http_methods' => array(
+                0 => 'GET',
+                1 => 'POST',
+            ),
+            'collection_query_whitelist' => array(),
+            'page_size' => 25,
+            'page_size_param' => null,
+            'entity_class' => 'Orders\\V1\\Rest\\Orders\\OrdersEntity',
+            'collection_class' => 'Orders\\V1\\Rest\\Orders\\OrdersCollection',
+            'service_name' => 'orders',
+        ),
     ),
     'zf-content-negotiation' => array(
         'controllers' => array(
@@ -144,6 +176,7 @@ return array(
             'Orders\\V1\\Rest\\Clients\\Controller' => 'HalJson',
             'Orders\\V1\\Rest\\Products\\Controller' => 'HalJson',
             'Orders\\V1\\Rest\\Users\\Controller' => 'HalJson',
+            'Orders\\V1\\Rest\\Orders\\Controller' => 'HalJson',
         ),
         'accept_whitelist' => array(
             'Orders\\V1\\Rest\\Ptypes\\Controller' => array(
@@ -166,11 +199,17 @@ return array(
                 1 => 'application/hal+json',
                 2 => 'application/json',
             ),
+            'Orders\\V1\\Rest\\Orders\\Controller' => array(
+                0 => 'application/vnd.orders.v1+json',
+                1 => 'application/hal+json',
+                2 => 'application/json',
+            ),
         ),
         'content_type_whitelist' => array(
             'Orders\\V1\\Rest\\Ptypes\\Controller' => array(
                 0 => 'application/vnd.orders.v1+json',
                 1 => 'application/json',
+                2 => 'application/x-www-form-urlencoded',
             ),
             'Orders\\V1\\Rest\\Clients\\Controller' => array(
                 0 => 'application/vnd.orders.v1+json',
@@ -183,6 +222,11 @@ return array(
                 2 => 'application/x-www-form-urlencoded',
             ),
             'Orders\\V1\\Rest\\Users\\Controller' => array(
+                0 => 'application/vnd.orders.v1+json',
+                1 => 'application/json',
+                2 => 'application/x-www-form-urlencoded',
+            ),
+            'Orders\\V1\\Rest\\Orders\\Controller' => array(
                 0 => 'application/vnd.orders.v1+json',
                 1 => 'application/json',
                 2 => 'application/x-www-form-urlencoded',
@@ -239,6 +283,18 @@ return array(
                 'route_identifier_name' => 'users_id',
                 'is_collection' => true,
             ),
+            'Orders\\V1\\Rest\\Orders\\OrdersEntity' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'orders.rest.orders',
+                'route_identifier_name' => 'orders_id',
+                'hydrator' => 'Zend\\Hydrator\\ClassMethods',
+            ),
+            'Orders\\V1\\Rest\\Orders\\OrdersCollection' => array(
+                'entity_identifier_name' => 'id',
+                'route_name' => 'orders.rest.orders',
+                'route_identifier_name' => 'orders_id',
+                'is_collection' => true,
+            ),
         ),
     ),
     'zf-apigility' => array(
@@ -249,6 +305,7 @@ return array(
                 'hydrator_name' => 'Zend\\Hydrator\\ArraySerializable',
                 'controller_service_name' => 'Orders\\V1\\Rest\\Ptypes\\Controller',
                 'entity_identifier_name' => 'id',
+                'table_service' => 'Orders\\V1\\Rest\\Ptypes\\PtypesResource\\Table',
             ),
             'Orders\\V1\\Rest\\Clients\\ClientsResource' => array(
                 'adapter_name' => 'DbAdapter',
@@ -481,9 +538,94 @@ return array(
             'Orders\\V1\\Rest\\Products\\ProductsRepository' => 'Orders\\V1\\Rest\\Products\\ProductsRepositoryFactory',
             'Orders\\V1\\Rest\\Users\\UsersResource' => 'Orders\\V1\\Rest\\Users\\UsersResourceFactory',
             'Orders\\V1\\Rest\\Users\\UsersRepository' => 'Orders\\V1\\Rest\\Users\\UsersRepositoryFactory',
+            'Orders\\V1\\Rest\\Orders\\OrdersResource' => 'Orders\\V1\\Rest\\Orders\\OrdersResourceFactory',
+            'Orders\\V1\\Rest\\Orders\\OrdersRepository' => 'Orders\\V1\\Rest\\Orders\\OrdersRepositoryFactory',
+            'Orders\\V1\\Rest\\Orders\\OrderItemTableGateway' => 'Orders\\V1\\Rest\\Orders\\OrderItemTableGatewayFactory',
+            'Orders\\V1\\Rest\\Orders\\OrderService' => 'Orders\\V1\\Rest\\Orders\\OrdersServiceFactory',
         ),
     ),
     'zf-mvc-auth' => array(
-        'authorization' => array(),
+        'authorization' => array(
+            'Orders\\V1\\Rest\\Users\\Controller' => array(
+                'collection' => array(
+                    'GET' => true,
+                    'POST' => true,
+                    'PUT' => false,
+                    'PATCH' => false,
+                    'DELETE' => false,
+                ),
+                'entity' => array(
+                    'GET' => true,
+                    'POST' => false,
+                    'PUT' => true,
+                    'PATCH' => true,
+                    'DELETE' => true,
+                ),
+            ),
+            'Orders\\V1\\Rest\\Products\\Controller' => array(
+                'collection' => array(
+                    'GET' => true,
+                    'POST' => true,
+                    'PUT' => false,
+                    'PATCH' => false,
+                    'DELETE' => false,
+                ),
+                'entity' => array(
+                    'GET' => true,
+                    'POST' => false,
+                    'PUT' => true,
+                    'PATCH' => true,
+                    'DELETE' => true,
+                ),
+            ),
+            'Orders\\V1\\Rest\\Clients\\Controller' => array(
+                'collection' => array(
+                    'GET' => true,
+                    'POST' => true,
+                    'PUT' => false,
+                    'PATCH' => false,
+                    'DELETE' => false,
+                ),
+                'entity' => array(
+                    'GET' => true,
+                    'POST' => false,
+                    'PUT' => true,
+                    'PATCH' => true,
+                    'DELETE' => true,
+                ),
+            ),
+            'Orders\\V1\\Rest\\Ptypes\\Controller' => array(
+                'collection' => array(
+                    'GET' => true,
+                    'POST' => true,
+                    'PUT' => false,
+                    'PATCH' => false,
+                    'DELETE' => false,
+                ),
+                'entity' => array(
+                    'GET' => true,
+                    'POST' => false,
+                    'PUT' => true,
+                    'PATCH' => true,
+                    'DELETE' => true,
+                ),
+            ),
+            'Orders\\V1\\Rest\\Orders\\Controller' => array(
+                'collection' => array(
+                    'GET' => true,
+                    'POST' => true,
+                    'PUT' => false,
+                    'PATCH' => false,
+                    'DELETE' => false,
+                ),
+                'entity' => array(
+                    'GET' => true,
+                    'POST' => false,
+                    'PUT' => true,
+                    'PATCH' => true,
+                    'DELETE' => true,
+                ),
+            ),
+        ),
     ),
 );

@@ -15,4 +15,3 @@ config/autoload/*.local.php
 data/cache/*
 !data/cache/.gitkeep
 .vagrant
-nbproject/

@@ -30,6 +30,12 @@ class UsersRepository
         return $rowset->current();
     }
 
+    public function findOneByUsername($username)
+    {
+        $rowset  = $this->tableGateway->select(['username' => $username]);
+        return $rowset->current();
+    }
+    
     public function insert($data)
     {
         $set = (new ObjectProperty())->extract($data);

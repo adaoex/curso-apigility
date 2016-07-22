@@ -1,4 +1,4 @@
 Projeto Treino para Apigility 
 ==============================
 
-Curso Code.education
+Aplicação mobile (treino) com Zend Apigility e Ionic Framework.
