@@ -22,4 +22,5 @@ return array(
     'ZF\\Rpc',
     'ZF\\Versioning',
     'Orders',
+    'ZfrCors',
 );

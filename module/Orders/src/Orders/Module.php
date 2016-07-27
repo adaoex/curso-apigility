@@ -30,7 +30,7 @@ class Module implements ApigilityProviderInterface
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-
+        
         // Wire in our listener at priority >1 to ensure it runs before the
         // DefaultAuthorizationListener
         $eventManager->attach(

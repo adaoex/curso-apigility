@@ -4,7 +4,6 @@ namespace Orders\V1\Rest\Orders;
 
 use Zend\Db\TableGateway\TableGatewayInterface;
 use Zend\Hydrator\ClassMethods;
-use Zend\Hydrator\ObjectProperty;
 use Zend\Paginator\Adapter\ArrayAdapter;
 
 class OrdersRepository

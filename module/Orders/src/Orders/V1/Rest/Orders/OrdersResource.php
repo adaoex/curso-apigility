@@ -58,9 +58,9 @@ class OrdersResource extends AbstractResourceListener
         
         $result = $this->service->delete($id);
         if ($result == 'error') {
-            return new ApiProblem(405, "Erro na inclusão do Pedido");
+            return new ApiProblem(405, "Erro ao deletar do pedido");
         }
-        return $result;
+        return true;
     }
 
     /**

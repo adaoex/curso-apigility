@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic', 'starter.controllers', 'angular-oauth2'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -23,22 +23,52 @@ angular.module('starter', ['ionic'])
   });
 })
 
-.config(function($stateProvider, $urlRouterProvider){
+.config(function($stateProvider, $urlRouterProvider, OAuthProvider,OAuthTokenProvider){
+    
+    OAuthProvider.configure({
+        baseUrl: 'http://apigility.app',
+        clientId: 'testclient',
+        clientSecret: 'test',
+        grantPath: '/oauth',
+        revokePath: '/oauth'
+    });
+    
+    OAuthTokenProvider.configure({
+        name: 'token',
+        options: {
+            secure: false
+        }
+    });
+    
     $stateProvider
     .state('tabs', {
         url: '/t',
         abstract: true,
         templateUrl: 'templates/tabs.html'
     })
-    .state('tabs.home', {
-        url: '/home',
+    .state('tabs.orders', {
+        url: '/orders',
         views:{
-            'home-tab': {
-                templateUrl: 'templates/home.html'
+            'orders-tab': {
+                templateUrl: 'templates/orders.html',
+                controller: 'OrdersCtrl'
             }
         }
     })
+    .state('tabs.create', {
+        url: '/create',
+        views:{
+            'create-tab': {
+                templateUrl: 'templates/create.html'
+            }
+        }
+    })
+    .state('login', {
+        url: '/login',
+        templateUrl: 'templates/login.html',
+        controller: 'LoginCtrl'
+    })
     
-    $urlRouterProvider.otherwise('/t/home');
+    $urlRouterProvider.otherwise('/login');
     
 })
